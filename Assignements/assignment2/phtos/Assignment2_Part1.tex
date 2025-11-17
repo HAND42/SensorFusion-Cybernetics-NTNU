@@ -1,0 +1,90 @@
+\documentclass[fleqn]{article}
+\usepackage{amsmath, fullpage}
+
+\title{TTK4250 Sensor Fusion \\ Assignment 2}
+\author{Mathias Meysembourg}
+\date{\today}
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+
+\Large\textbf{Task 1}
+\vspace{5mm}
+
+(a) 
+\begin{equation*}
+    \begin{split}
+     E[z] &= E[\Sigma^{-\frac{1}{2}}(x - \mu)] \\
+        &= \Sigma^{-\frac{1}{2}} E[x - \mu]  \\
+        &= \Sigma^{-\frac{1}{2}} (E[x] - \mu) \\
+        &= \Sigma^{-\frac{1}{2}} (\mu - \mu) \\
+        &= 0
+    \end{split}
+\end{equation*}
+
+ \begin{equation*}
+     \begin{split}
+        Cov(z) &= E[zz^T] \\
+        &= E[\Sigma^{-\frac{1}{2}}(x - \mu)(x - \mu)^T(\Sigma^{-\frac{1}{2}})^T]\\
+        &= \Sigma^{-\frac{1}{2}} E[(x - \mu)(x - \mu)^T] (\Sigma^{-\frac{1}{2}})^T \\
+        &= \Sigma^{-\frac{1}{2}} \Sigma \Sigma^{-\frac{1}{2}} \\
+        &= \Sigma^{-\frac{1}{2}} \Sigma^{\frac{1}{2}} (\Sigma^{\frac{1}{2}})^T (\Sigma^{-\frac{1}{2}})^T \\
+        &= I
+     \end{split}
+ \end{equation*}
+
+
+The distribution is then \(z \sim \mathcal{N}(0, I)\) with \(I\) being the identity matrix.
+
+\vspace{10mm}
+
+(b) Theorem 2.5.1 - For a nonlinear transformation of random variables we have 
+\begin{equation*}
+h(y) = \sum_{i=1}^{n} g(f_i^{-1}(y)) \left| \det \left( {F_i^{-1}(y)} \right) \right|
+\end{equation*}
+
+The pdf of \(z_i\) is given by \(
+g(z_i) = \frac{1}{\sqrt{2\pi}} exp(-\frac{z_i^2}{2})\)
+
+\begin{equation*}
+\begin{split}
+     y_i = f(z_i) = z_i^2 \quad &\Rightarrow \quad z_i = \pm \sqrt{y_i} \\
+     &\Rightarrow \left| \det \left( {F_i^{-1}(y_i)} \right) \right| = \left| \frac{1}{2 \sqrt{y_i}} \right|
+\end{split}
+\end{equation*}
+
+\begin{equation*}
+    \begin{split}
+        h(y_i) &= \frac{g(\sqrt{y_i})}{\left| 2\sqrt{y_i}\right|} +\frac{g(-\sqrt{y_i})}{\left| 2\sqrt{y_i}\right|} \\
+        &= \frac{1}{\sqrt{2\pi}} \frac{1}{\left| 2\sqrt{y_i}\right|} \left( exp(-\frac{(\sqrt{y_i})^2}{2}) + exp(-\frac{(-\sqrt{y_i})^2}{2})\right)\\
+        &= \frac{1}{\sqrt{2\pi y_i}}exp(-\frac{y_i}{2})
+    \end{split}
+\end{equation*}
+This is a \(\chi^2\) distribution with 1 degree of freedom. \(y_i \sim \chi^2(1) \)
+
+\vspace{10mm}
+
+(c) The moment-generating function for each chi-squared distribution is given by 
+\begin{equation*}
+    M_{y_i}(s) = (1-2s)^{-\frac{y_i}{2}} , s < \frac{1}{2} 
+\end{equation*}
+
+We have \(Y = \Sigma y_i\) so the MGF of \(Y\) is 
+\begin{equation*}
+\begin{split}
+    M_Y(s) &= \left( (1-2s)^{-\frac{y_i}{2}} \right)^N \text{, where} \hspace{2mm} i \in [0;N] \\
+    &= (1-2s)^{-\frac{Ny_i}{2}}
+\end{split}
+\end{equation*}
+
+Y follows a \(\chi^2\) distribution with N degrees of freedom. \(Y \sim \chi ^2(N)\)
+
+\newpage
+\Large\textbf{Task 2} 
+\vspace{5mm}
+
+(a) 
+
+
+\end{document}
+

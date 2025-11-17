@@ -1,0 +1,278 @@
+\documentclass[fleqn]{article}
+\usepackage{amsmath, fullpage, graphicx}
+
+\title{TTK4250 Sensor Fusion \\ Assignment 2}
+\author{Mathias Meysembourg}
+\date{\today}
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+
+\Large\textbf{Task 1}
+\vspace{5mm}
+
+(a) 
+\begin{equation*}
+    \begin{split}
+     E[z] &= E[\Sigma^{-\frac{1}{2}}(x - \mu)] \\
+        &= \Sigma^{-\frac{1}{2}} E[x - \mu]  \\
+        &= \Sigma^{-\frac{1}{2}} (E[x] - \mu) \\
+        &= \Sigma^{-\frac{1}{2}} (\mu - \mu) \\
+        &= 0
+    \end{split}
+\end{equation*}
+
+ \begin{equation*}
+     \begin{split}
+        Cov(z) &= E[zz^T] \\
+        &= E[\Sigma^{-\frac{1}{2}}(x - \mu)(x - \mu)^T(\Sigma^{-\frac{1}{2}})^T]\\
+        &= \Sigma^{-\frac{1}{2}} E[(x - \mu)(x - \mu)^T] (\Sigma^{-\frac{1}{2}})^T \\
+        &= \Sigma^{-\frac{1}{2}} \Sigma \Sigma^{-\frac{1}{2}} \\
+        &= \Sigma^{-\frac{1}{2}} \Sigma^{\frac{1}{2}} (\Sigma^{\frac{1}{2}})^T (\Sigma^{-\frac{1}{2}})^T \\
+        &= I
+     \end{split}
+ \end{equation*}
+
+
+The distribution is then \(z \sim \mathcal{N}(0, I)\) with \(I\) being the identity matrix.
+
+\vspace{10mm}
+
+(b) Theorem 2.5.1 - For a nonlinear transformation of random variables we have 
+\begin{equation*}
+h(y) = \sum_{i=1}^{n} g(f_i^{-1}(y)) \left| \det \left( {F_i^{-1}(y)} \right) \right|
+\end{equation*}
+
+The pdf of \(z_i\) is given by \(
+g(z_i) = \frac{1}{\sqrt{2\pi}} exp(-\frac{z_i^2}{2})\)
+
+\begin{equation*}
+\begin{split}
+     y_i = f(z_i) = z_i^2 \quad &\Rightarrow \quad z_i = \pm \sqrt{y_i} \\
+     &\Rightarrow \left| \det \left( {F_i^{-1}(y_i)} \right) \right| = \left| \frac{1}{2 \sqrt{y_i}} \right|
+\end{split}
+\end{equation*}
+
+\begin{equation*}
+    \begin{split}
+        h(y_i) &= \frac{g(\sqrt{y_i})}{\left| 2\sqrt{y_i}\right|} +\frac{g(-\sqrt{y_i})}{\left| 2\sqrt{y_i}\right|} \\
+        &= \frac{1}{\sqrt{2\pi}} \frac{1}{\left| 2\sqrt{y_i}\right|} \left( exp(-\frac{(\sqrt{y_i})^2}{2}) + exp(-\frac{(-\sqrt{y_i})^2}{2})\right)\\
+        &= \frac{1}{\sqrt{2\pi y_i}}exp(-\frac{y_i}{2})
+    \end{split}
+\end{equation*}
+This is a \(\chi^2\) distribution with 1 degree of freedom. \(y_i \sim \chi^2(1) \)
+
+\vspace{10mm}
+
+(c) The moment-generating function for each chi-squared distribution is given by 
+\begin{equation*}
+    M_{y_i}(s) = (1-2s)^{-\frac{y_i}{2}} , s < \frac{1}{2} 
+\end{equation*}
+
+We have \(Y = \Sigma y_i\) so the MGF of \(Y\) is 
+\begin{equation*}
+\begin{split}
+    M_Y(s) &= \left( (1-2s)^{-\frac{y_i}{2}} \right)^N \text{, where} \hspace{2mm} i \in [0;N] \\
+    &= (1-2s)^{-\frac{Ny_i}{2}}
+\end{split}
+\end{equation*}
+
+Y follows a \(\chi^2\) distribution with N degrees of freedom. \(Y \sim \chi ^2(N)\)
+
+\newpage
+\Large\textbf{Task 2} 
+\vspace{10mm}
+
+(a) The measurement model is given as
+\begin{equation*}
+    \begin{split}
+        z^c &= H^cx + v^c \\
+        &= x + v^c
+    \end{split}
+\end{equation*}
+
+\(p(z^c|x)\) is the likelihood and can be written as
+\begin{equation*}
+    p(z^c|x) = \mathcal{N} \left( z^c ; x, R^c \right)
+\end{equation*}
+
+\vspace{10mm}
+
+(b)\begin{equation*}
+    \begin{split}
+        p(x, z^c) &= p(x|z^c) p(z) \\
+        &= p(z^c|x) p(x) \\
+        &= \mathcal{N} \left( x, R^c \right) \mathcal{N} \left( \Bar{x}, P \right)
+    \end{split}
+\end{equation*}
+
+We write in quadratic form
+\begin{equation*}
+\begin{split}
+    p(x, z^c) &= 
+    \begin{bmatrix} x - \bar{x} \\ z^c - Hx \end{bmatrix}^T \begin{bmatrix} P^{-1} & 0 \\ 0 & R^{c-1} \end{bmatrix} \begin{bmatrix} x - \bar{x} \\ z^c - Hx \end{bmatrix} \\
+    &= 
+    \begin{bmatrix} x - \bar{x} \\ z^c - Hx\end{bmatrix}^T
+    \begin{bmatrix} I & -H^T \\ 0 & I   \end{bmatrix}
+    \begin{bmatrix} P^{-1} & 0 \\ 0 & R^{c-1} \end{bmatrix}
+    \begin{bmatrix} I & 0 \\ -H & I   \end{bmatrix}
+    \begin{bmatrix} x - \bar{x} \\ z^c - Hx \end{bmatrix} \\
+    &=
+    \begin{bmatrix} x - \bar{x} \\ z^c - Hx\end{bmatrix}^T
+    \left(
+    \begin{bmatrix} I & 0 \\ H & I   \end{bmatrix}
+    \begin{bmatrix} P & 0 \\ 0 & R^c \end{bmatrix}
+    \begin{bmatrix} I & H^T \\ 0 & I   \end{bmatrix}
+    \right)^{-1}
+    \begin{bmatrix} x - \bar{x} \\ z^c - Hx \end{bmatrix} \\
+    &=
+    \begin{bmatrix} x - \bar{x} \\ z^c - Hx\end{bmatrix}^T
+    \begin{bmatrix} P & PH^T \\ HP & HPH^T + R^c \end{bmatrix}^{-1}
+    \begin{bmatrix} x - \bar{x} \\ z^c - Hx \end{bmatrix} \\
+    &=
+    \mathcal{N}\left(  \begin{bmatrix}x\\z^c\end{bmatrix};
+    \begin{bmatrix}\bar{x}\\H\bar{x}\end{bmatrix},
+    \begin{bmatrix}P & PH^T \\ HP &  HPH^T + R^c\end{bmatrix}
+    \right)
+\end{split}
+\end{equation*}
+
+\vspace{10mm}
+
+(c) From question (b), we have
+\begin{equation*}
+    p(x, z^c) = \mathcal{N}\left(  \begin{bmatrix}x\\z^c\end{bmatrix};
+    \begin{bmatrix}\bar{x}\\H\bar{x}\end{bmatrix},
+    \begin{bmatrix}P & PH^T \\ HP &  HPH^T + R^c\end{bmatrix}
+    \right)
+\end{equation*}
+
+Theorem 3.2.3 helps us derive 
+\begin{equation*}
+    p(z^c)= \mathcal{N}\left(z^c;\bar{x},P+R^c\right)
+\end{equation*}
+
+and
+\vspace{-2mm}
+\begin{equation*}
+    p(x|z^c) = \mathcal{N}\left(x; \mu_{x|z^c}, P_{x|z^c}\right)
+\end{equation*}
+
+with
+
+\(\mu_{x|z^c} = \bar{x} + P(P+R^c)^{-1}(z^c-\bar{x})\) 
+
+\(P_{x|z^c} = P-P(P+R^c)^{-1}P\)
+
+\vspace{5mm}
+Finaly, the marginal and conditional are:
+\begin{equation*}
+    p(z^c) = \mathcal{N}\left( z^c; \begin{bmatrix} 0\\0 \end{bmatrix}, \begin{bmatrix}104 & 36 \\ 36 & 61 \end{bmatrix}\right)
+\end{equation*}
+\begin{equation*}
+    p(x|z^c) = \mathcal{N}\left( x; \frac{z^c}{5048} \begin{bmatrix} 1525 & -900 \\ -900 & 2600 \end{bmatrix}, \frac{1}{5048} \begin{bmatrix}88075 & 22500 \\ 22500 & 61200 \end{bmatrix}\right)
+\end{equation*}
+
+\vspace{10mm}
+(d) Simmilarly, we have
+
+\begin{equation*}
+    p(z^r) = \mathcal{N}\left( z^r; \begin{bmatrix} 0\\0 \end{bmatrix}, \begin{bmatrix}53 & 4 \\ 4 & 47 \end{bmatrix}\right)
+\end{equation*}
+\begin{equation*}
+    p(x|z^r) = \mathcal{N}\left( x; \frac{z^r}{99} \begin{bmatrix} 47 & -4 \\ -4 & 53 \end{bmatrix}, \frac{1}{99} \begin{bmatrix}1300 & 100 \\ 100 & 1150 \end{bmatrix}\right)
+\end{equation*}
+
+
+
+\vspace{10mm}
+(e) From (c), we know that \(p(x|z^c) = \mathcal{N}\left(x;\mu_{x|z^c},P_{x|z^c}\right)\). The MMSE is then
+\begin{equation*}
+    \Hat{x}_{MMSE} = E[x|z^c] = \mu_{x|z^c}
+\end{equation*}
+
+Since \(p(x|z^c)\) is gaussian, the mean is also its mode. The MAP is then given by
+\begin{equation*}
+    \hat{x}_{MAP}=arg \max\limits_{x} p(x|z^c) = \mu_{x|z^c}
+\end{equation*}
+
+\vspace{10mm}
+(f - k) the code is in the zip file.
+\vspace{10mm}
+
+\Large\textbf{Task 3}\vspace{5mm}
+(a)
+\begin{equation*}
+    \ln{\left(
+    \mathcal{N}^{-1}(x;a,B)\mathcal{N}^{-1}(y;Cx,D)
+    \right)}=
+\end{equation*}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\linewidth]{3(1).jpg}
+\end{figure}
+
+and \(\Sigma = \begin{bmatrix}B + C^T D^{-1}C & -C^T \\ -C & D\end{bmatrix}\), we have
+    
+\begin{equation*}
+    \begin{split}
+    \ln{\left(\mathcal{N}^{-1}(x;a,B)\mathcal{N}^{-1}(y;Cx,D)\right)}
+    &= z + \begin{bmatrix}a\\0\end{bmatrix}^T \Sigma^{-1}
+    \begin{bmatrix}a\\0\end{bmatrix} + \begin{bmatrix}a\\0\end{bmatrix}^T \begin{bmatrix}x\\y\end{bmatrix} - \frac{1}{2} \begin{bmatrix}x\\y\end{bmatrix}^T \Sigma \begin{bmatrix}x\\y\end{bmatrix}\\
+    \end{split}
+\end{equation*}
+
+The product (6) is then identical to the gaussian:
+
+\begin{equation*}
+    \mathcal{N}^{-1}(x;a,B)\mathcal{N}^{-1}(y;Cx,D)
+    =\mathcal{N}^{-1}\left(\begin{bmatrix}x\\y\end{bmatrix}; \begin{bmatrix}a\\0\end{bmatrix}, \begin{bmatrix}B + C^T D^{-1}C & -C^T \\ -C & D\end{bmatrix}\right)
+\end{equation*}
+
+\vspace{10mm}
+(b) By using Theorem 3.4.1, we have
+
+\begin{equation*}
+    p(x,y) \propto exp\left(
+    \begin{bmatrix}a^T & 0\end{bmatrix}
+    \begin{bmatrix}x\\y\end{bmatrix} - \frac{1}{2}
+    \begin{bmatrix}x^T & y^T\end{bmatrix}
+    \begin{bmatrix}B+C^TD^{-1}C & -C^T \\ -C & D\end{bmatrix}
+    \begin{bmatrix}x \\ y\end{bmatrix}\right)
+\end{equation*}
+
+\begin{equation*}
+    p(y) \propto exp \left( \eta_*^T y -\frac{1}{2}y^T \Lambda_*y\right)
+\end{equation*}
+with
+\begin{equation*}
+    \begin{split}
+        \eta_* &= \eta_b - \Lambda_{xy}^T\Lambda_{xx}^{-1} \eta_a\\
+        &= 0 + C(B+C^TD^{-1})^{-1}a \\
+        \Lambda_* &= \Lambda_{yy} - \Lambda_{xy}^T \Lambda_{xx}^{-1} \Lambda_{xy}\\
+        &= D + C(B+C^TD^{-1}C)^{-1}(-C)^T
+    \end{split}
+\end{equation*}
+
+The marginal distribution is then
+\begin{equation*}
+    p(y)=\mathcal{N}^{-1}\left(y;C(B+C^{T}D^{-1}C)^{-1}a, D-C(B+C^TD^{-1}C)^{-1}C^T\right)
+\end{equation*}
+
+\vspace{10mm}
+(c) Theorem 3.4.1 gives us
+\begin{equation*}
+    \begin{split}
+        \eta_{x|y} &= \eta_a - \Lambda_{xy}y
+        &= a + C^Ty
+        \Lambda_{x|y}&=\Lambda_{xx} \\
+        &=B + C^TD^{-1}C
+    \end{split}
+\end{equation*}
+
+The conditional distribution of x given y is then
+\begin{equation*}
+    p(x|y) = \mathcal{N}^{-1}\left(x;a + C^Ty, B + C^TD^{-1}C\right)
+\end{equation*}
+
+\end{document}
